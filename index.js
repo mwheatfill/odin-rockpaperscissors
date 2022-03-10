@@ -1,5 +1,3 @@
-console.log('Starting Rock, Paper, Scissors');
-
 // Function to get random selection back for computer
 const computerPlay = () => {
   const options = ['rock', 'paper', 'scissors'];
@@ -11,14 +9,41 @@ const getRandomNumber = (num) => {
   return Math.floor(Math.random() * num);
 };
 
+// displays running game results
+const displayResults = (result) => {
+  const display = document.querySelector('.display');
+  const output = document.createElement('p');
+  output.textContent = result;
+  display.appendChild(output);
+};
+
+// displays the end results when a competitor reaches the game limit first
+const endGame = (isPlayerWinner) => {
+  const display = document.querySelector('.display');
+  const output = document.createElement('h3');
+  isPlayerWinner
+    ? (output.textContent = `You won ${playerScore} games to ${computerScore}`)
+    : (output.textContent = `You lost ${playerScore} games to ${computerScore}`);
+
+  display.appendChild(output);
+};
+
+// disables buttons once the game limit has been reached
+const disableButtons = () => {
+  const buttons = document.querySelectorAll('button');
+  buttons.forEach((button) => {
+    button.disabled = true;
+  });
+};
+
 // Play a round with the player and computer
-const playRound = () => {
-  const playerSelection = prompt('Type [rock, paper or scissors]');
+const playRound = (e) => {
+  const playerSelection = e.target.id;
   const computerSelection = computerPlay();
 
   if (playerSelection == computerSelection) {
-    console.log('Its a tie. Play again.');
-    return playRound();
+    displayResults('Its a tie. Play again.');
+    return;
   }
 
   if (playerSelection == 'rock') {
@@ -38,55 +63,43 @@ const playRound = () => {
   }
 
   if (playerSelection == 'scissors') {
-    if ((computerSelection = 'rock')) {
+    if (computerSelection == 'rock') {
       playerWon = false;
     } else {
       playerWon = true;
     }
   }
-  console.log(
-    playerWon
-      ? `You win! ${playerSelection} beats ${computerSelection}`
-      : `You lost! ${computerSelection} beats ${playerSelection}`
-  );
-  return playerWon;
-  // ? `You win! ${playerSelection} beats ${computerSelection}`
-  // : `You lost! ${computerSelection} beats ${playerSelection}`;
-};
 
-// Calculate winner. If tie, prompt again, if winner, return winner.
-// Display playerWons to user
-
-// const playerSelection = prompt('Type your selection:').toLowerCase();
-
-// game functiom that accepts one argument for how many rounds should be played
-const game = (numberOfRounds) => {
-  // object to hold game results
-  let results = {
-    gamesPlayed: 0,
-    playerScore: 0,
-    computerScore: 0,
-  };
-
-  for (let index = 0; index < numberOfRounds; index++) {
-    const round = playRound();
-    if (round) {
-      results.playerScore++;
+  if (playerWon) {
+    playerScore++;
+    if (playerScore < 5) {
+      displayResults(
+        `You win! ${playerSelection} beats ${computerSelection}. (You: ${playerScore} Opponent: ${computerScore})`
+      );
     } else {
-      results.computerScore++;
+      endGame(playerWon);
+      disableButtons();
     }
-    results.gamesPlayed = index + 1;
+  } else {
+    computerScore++;
+    if (computerScore < 5) {
+      displayResults(
+        `You lost! ${computerSelection} beats ${playerSelection}. (You: ${playerScore} Opponent: ${computerScore})`
+      );
+    } else {
+      endGame(playerWon);
+      disableButtons();
+    }
   }
-  return results;
 };
 
-const gameResults = game(5);
-console.log(`Game results:`);
-console.log(`Rounds played: ${gameResults.gamesPlayed}`);
-console.log(`Your score: ${gameResults.playerScore}`);
-console.log(`Computer score: ${gameResults.computerScore}`);
-if (gameResults.playerScore > gameResults.computerScore) {
-  console.log('Congrats, you won the game!');
-} else {
-  console.log('You lost the game. Better luck next time!');
-}
+// Add event listener to buttons
+const buttons = document.querySelectorAll('button');
+
+buttons.forEach((button) => {
+  button.addEventListener('click', playRound);
+});
+
+//initialize variables
+let playerScore = 0;
+let computerScore = 0;

@@ -1,5 +1,8 @@
 # odin-rockpaperscissors
-A console based Rock, Paper, Scissors game written in JavaScript
+A rock, paper, scissors game that started out console based and now has a simple web ui.
+
+# Live demo site
+https://mwheatfill.github.io/odin-rockpaperscissors/
 
 #Learnings and thoughts
 * What's the optimal way to handle a tie condition? The project showed an example of a playRound function that accepted the playerSelection and the computerSelection inputs, but I found it easier with my initial thinking to call playRound() with no arguments and collect the input there, recursing until there wasn't a tie.
